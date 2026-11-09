@@ -1,0 +1,28 @@
+NEXA MARMITAS V4.2 — FECHAMENTO FINANCEIRO MENSAL
+
+Novidades
+- Financeiro e administrador visualizam TODOS os dias do mês, de 1 até o último dia, inclusive dias sem lançamento.
+- Resumo por data com quantidade de marmitas, funcionários atendidos e gasto.
+- Total do mês em destaque, valores por funcionário e detalhamento individual dos pedidos.
+- Escolha qualquer competência no campo de mês (inclui anos bissextos).
+- Botão "Salvar em PDF": abre janela de impressão, escolha "Salvar como PDF" no navegador.
+- Botão "Baixar planilha CSV": fornece relatório mensal completo com todos os dias e os detalhes.
+- Botão "Compartilhar resumo": abre compartilhamento do celular quando disponível, ou copia o texto.
+- Campo opcional Empresa / setor para identificar o documento.
+- Mesmos acessos: administrador total, funcionário somente pedidos do dia, financeiro consultas e valores.
+- Preserva a arte de carregamento e responsividade móvel da versão 4.1.
+
+Publicação no GitHub Pages
+1. Faça backup do repositório.
+2. Extraia o arquivo ZIP GitHub V4.2 e substitua TODOS os arquivos na raiz do seu repositório.
+3. Confira que index.html, styles.css, app.js, config.js, sw.js e as imagens ficaram na mesma pasta.
+4. Confirme a publicação. Se o celular mostrar tela antiga, feche o app e abra de novo; no computador use Ctrl+F5.
+
+NÃO PRECISA RODAR SQL NEM ALTERAR AS EDGE FUNCTIONS. O banco Supabase atual permanece o mesmo.
+
+IMPORTANTE
+- O relatório usa os pedidos ativos cadastrados no banco e seus preços históricos.
+- Dias sem lançamento não comprovam que não houve consumo; confira pedidos pendentes antes de enviar à empresa.
+- O arquivo HTML único para testes precisa de internet e login para mostrar os dados verdadeiros.
+- No PDF, escolha "Salvar como PDF" na janela de impressão; no iPhone/Android o procedimento depende do navegador.
+- Os dados da demonstração local são fictícios e não correspondem ao banco da empresa.

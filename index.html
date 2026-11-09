@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Registro de pedidos de marmitas por data e funcionário, com acompanhamento financeiro.">
+  <title>Nexa Marmitas | Controle de Pedidos</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+<style>
+/* NEXA MARMITAS | SPLASH PREMIUM RESPONSIVO v4.1 */
+html{background:#090b0f}
+#nexa-splash {
+  position:fixed;inset:0;z-index:100000;display:grid;place-items:center;
+  height:100vh;height:100dvh;width:100%;overflow:hidden;
+  background:#08090d;color:#fff;
+  opacity:1;visibility:visible;transition:opacity .58s ease,visibility .58s ease;
+  isolation:isolate;
+}
+#nexa-splash:before{
+  content:"";position:absolute;inset:-14%;z-index:0;
+  background-image:var(--nexa-splash-image);
+  background-position:center;background-size:cover;
+  filter:blur(42px) brightness(.34) saturate(1.1);
+  transform:scale(1.18);
+}
+#nexa-splash .nexa-splash-stage{
+ position:relative;z-index:1;height:100%;height:100dvh;
+ width:min(100%,calc(100dvh * 941 / 1672));
+ overflow:hidden;
+ background:#08090d;
+ filter:drop-shadow(0 0 27px rgba(255,170,0,.16));
+}
+#nexa-splash .nexa-splash-art{
+ display:block;width:100%;height:100%;object-fit:contain;object-position:center;
+ user-select:none;-webkit-user-drag:none;pointer-events:none;
+}
+#nexa-splash .nexa-splash-spinner{
+ position:absolute;left:50%;top:82.05%;width:clamp(27px,4.4dvh,44px);aspect-ratio:1;
+ margin:0;transform:translate(-50%,-50%);border-radius:50%;
+ display:grid;place-items:center;
+ filter:drop-shadow(0 0 7px rgba(255,187,0,.9));
+ pointer-events:none;
+}
+#nexa-splash .nexa-splash-spinner:before{
+ content:"";display:block;width:88%;height:88%;border-radius:50%;
+ border:3px solid rgba(255,195,0,.07);
+ border-top-color:#ffd538;border-right-color:rgba(255,192,4,.7);
+ animation:nexa-splash-spin 1.05s linear infinite;
+}
+#nexa-splash .nexa-splash-glow {
+ position:absolute;left:50%;top:82%;transform:translate(-50%,-50%);
+ width:82px;height:82px;border-radius:50%;pointer-events:none;
+ box-shadow:0 0 70px 4px rgba(255,160,0,.08);
+ animation:nexa-splash-glow 1.85s ease-in-out infinite;
+}
+#nexa-splash.nexa-splash-out{opacity:0;visibility:hidden;pointer-events:none}
+@keyframes nexa-splash-spin{to{transform:rotate(360deg)}}
+@keyframes nexa-splash-glow{50%{opacity:.55;filter:brightness(1.6)}}
+@media (max-aspect-ratio: 10/18){
+ #nexa-splash .nexa-splash-stage{width:100%;height:100%;height:100dvh}
+ #nexa-splash .nexa-splash-art{object-fit:cover}
+}
+@media (max-width:780px){
+  #nexa-splash{touch-action:none}
+  #nexa-splash .nexa-splash-stage{filter:none}
+}
+@media (prefers-reduced-motion:reduce){
+ #nexa-splash .nexa-splash-spinner:before,#nexa-splash .nexa-splash-glow{animation:none}
+ #nexa-splash{transition:none}
+}
+</style>
+</head>
+<body>
+<div id="nexa-splash" role="status" aria-label="Carregando Nexa Marmitas" style="--nexa-splash-image:url('./splash-nexa-marmitas.webp')"><div class="nexa-splash-stage"><img class="nexa-splash-art" src="./splash-nexa-marmitas.webp" alt="Nexa Marmitas — Controle de Pedidos" width="941" height="1672" fetchpriority="high"><span class="nexa-splash-glow" aria-hidden="true"></span><span class="nexa-splash-spinner" aria-hidden="true"></span></div></div>
+
+  <div id="app"><div class="loading-screen"><span class="loading-mark">M</span><strong>Controle de Marmitas</strong><span>Carregando painel...</span></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <script src="./config.js"></script>
+  <script defer src="./app.js"></script>
+  
+  <script>if ("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));</script>
+<script>
+/* Loading graphic is an overlay only. App initialization/auth remains unchanged. */
+(function(){
+  'use strict';
+  var started=Date.now();
+  var minVisibleMs=1650;
+  var splash=document.getElementById('nexa-splash');
+  var app=document.getElementById('app');
+  if(!splash||!app)return;
+  var completed=false;
+  var observer=null;
+  var interval=null;
+  var fallback=null;
+  var pending=null;
+  function cleanup(){
+    if(observer)observer.disconnect();
+    if(interval)clearInterval(interval);
+    if(fallback)clearTimeout(fallback);
+    if(pending)clearTimeout(pending);
+  }
+  function dismiss(){
+    if(completed)return;
+    completed=true;
+    cleanup();
+    splash.classList.add('nexa-splash-out');
+    setTimeout(function(){if(splash.parentNode)splash.remove()},700);
+  }
+  function ready(){
+    if(completed)return;
+    var hasScreen=app.children.length>0 && !app.querySelector('.loading-screen');
+    if(!hasScreen)return;
+    var delay=Math.max(0,minVisibleMs-(Date.now()-started));
+    if(!pending)pending=setTimeout(dismiss,delay);
+  }
+  // Unlock the UI even if an external CDN or connection never responds.
+  fallback=setTimeout(function(){
+    var loading=app.querySelector('.loading-screen');
+    if(loading){
+      var info=loading.querySelector('span:last-child');
+      if(info)info.textContent='A conexão está demorando. Confira a internet e atualize a página.';
+    }
+    dismiss();
+  },12000);
+  observer=new MutationObserver(ready);
+  observer.observe(app,{childList:true,subtree:true});
+  interval=setInterval(ready,180);
+  ready();
+})();
+</script>
+</body>
+</html>

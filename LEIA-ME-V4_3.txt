@@ -1,0 +1,11 @@
+NEXA MARMITAS V4.3 — Fechamento mensal para fornecedor
+
+NOVO: no painel de pedidos, abaixo do fechamento do dia, administradores e financeiro visualizam o fechamento total do mês, escolhem a competência e copiam o resumo por tamanho e valor para o fornecedor.
+
+Preserva as funções da V4.2: Financeiro com calendário mensal, exportação PDF/CSV, pedidos, perfis, Supabase e splash de abertura.
+
+PUBLICAR: envie index.html, app.js, styles.css, config.js, sw.js, imagens e demais arquivos do ZIP para a raiz do GitHub Pages, substituindo os antigos. Não publique as senhas ou service_role no GitHub.
+
+NÃO É NECESSÁRIO SQL NOVO: cálculo usa a tabela orders já existente.
+
+CUIDADO: no Supabase plano Free, limite de pedidos consultados no front-end: app carrega até 20.000 itens por paginação (800 por consulta). Confira se os registros do período estão completos antes de enviar ao fornecedor.
